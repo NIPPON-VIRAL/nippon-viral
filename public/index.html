@@ -271,9 +271,13 @@ async function fetchRanking(){
     const data=await res.json();
     stopSteps();loading.classList.remove('on');
     if(data.error) throw new Error(data.error);
-    const m=data.content.match(/\{[\s\S]*\}/);
-    const parsed=JSON.parse(m?m[0]:data.content);
-    spots=parsed.spots||[];
+    let parsed={spots:[]};
+try{
+  const m=data.content.match(/\{[\s\S]*\}/);
+  if(m) parsed=JSON.parse(m[0]);
+  if(!parsed.spots) parsed={spots:[]};
+}catch(pe){console.error('JSON parse error',pe,data.content);}
+spots=parsed.spots;
     renderSpots(spots);
   }catch(e){
     stopSteps();loading.classList.remove('on');
