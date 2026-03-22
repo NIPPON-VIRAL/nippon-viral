@@ -177,7 +177,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
   <button class="tab-btn" onclick="setTab('food',this)">🍜 グルメ</button>
   <button class="tab-btn" onclick="setTab('nature',this)">🗻 絶景</button>
   <button class="tab-btn" onclick="setTab('culture',this)">⛩ 文化</button>
-  <button class="fetch-btn" id="fetch-btn" onclick="fetchRanking()">ランキングを取得する</button>
 </div>
 <div class="loading-wrap" id="loading">
   <span class="loading-mon">巴</span>
@@ -435,7 +434,14 @@ function getBtnStyle(p){
 }
 function closeDrawer(){document.getElementById('drawer-bg').classList.remove('on');document.getElementById('drawer').classList.remove('on');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
-window.addEventListener('load',()=>fetchRanking());
+function scheduleAt8am(){
+  const now=new Date();
+  const next=new Date();
+  next.setHours(8,0,0,0);
+  if(now>=next) next.setDate(next.getDate()+1);
+  setTimeout(()=>{fetchRanking();setInterval(fetchRanking,86400000);},next-now);
+}
+window.addEventListener('load',()=>{fetchRanking();scheduleAt8am();});
 </script>
 <!-- フッター法的表記 -->
 <footer style="position:relative;z-index:1;border-top:1px solid rgba(14,12,10,0.15);padding:2rem;font-size:0.7rem;color:#7a7168;line-height:2;font-family:'EB Garamond',serif;background:#f2ede6;">
