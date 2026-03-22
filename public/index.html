@@ -191,7 +191,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
 <div id="main">
   <div class="empty">
     <span class="empty-kanji">旅</span>
-    <div class="empty-title">「ランキングを取得する」を押してください</div>
+    <div class="empty-title">ランキングを読み込んでいます...</div>
     <div class="empty-sub">昨日8時〜本日8時の SNS 閲覧数トップ10が表示されます</div>
   </div>
 </div>
@@ -244,10 +244,9 @@ function startSteps(){
 function stopSteps(){clearInterval(loadTimer);}
 
 async function fetchRanking(){
-  const btn=document.getElementById('fetch-btn');
   const loading=document.getElementById('loading');
   const main=document.getElementById('main');
-  btn.disabled=true;loading.classList.add('on');main.innerHTML='';startSteps();
+  loading.classList.add('on');main.innerHTML='';startSteps();
 
   const now=new Date(),fmt=d=>`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
   const t8=new Date(now);t8.setHours(8,0,0,0);
@@ -289,14 +288,14 @@ YouTube Shorts・TikTok・Instagramの閲覧数データを分析し、指定期
       })
     });
     const data=await res.json();
-    stopSteps();loading.classList.remove('on');btn.disabled=false;
+    stopSteps();loading.classList.remove('on');
     if(data.error) throw new Error(data.error);
     const m=data.content.match(/\{[\s\S]*\}/);
     const parsed=JSON.parse(m?m[0]:data.content);
     spots=parsed.spots||[];
     renderSpots(spots);
   }catch(e){
-    stopSteps();loading.classList.remove('on');btn.disabled=false;
+    stopSteps();loading.classList.remove('on');
     main.innerHTML=`<div style="padding:2rem;border:1px solid rgba(192,57,43,0.4);margin:1rem;font-size:.85rem;color:var(--red);font-family:'EB Garamond',serif;"><div style="font-weight:600;margin-bottom:.5rem;">エラー</div><div style="color:var(--ash);">${e.message}</div></div>`;
   }
 }
