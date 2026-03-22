@@ -254,27 +254,8 @@ async function fetchRanking(){
   const period=`${fmt(y8)} 08:00 〜 ${fmt(t8)} 08:00`;
   const catStr={all:'風景・絶景・グルメ・食事 すべて',food:'グルメ・食事',nature:'風景・絶景・自然',culture:'文化・観光・祭り'}[currentTab];
 
-  const sys=`あなたは日本のSNSトレンド専門アナリストです。
-YouTube Shorts・TikTok・Instagramの閲覧数データを分析し、指定期間内に日本国内で最もバズった旅行・グルメスポットのランキングをJSONのみで返してください（前置きも\`\`\`も不要）。
-{
-  "spots": [
-    {
-      "rank": 1,
-      "name": "スポット名（日本語）",
-      "location": "都道府県・市区町村",
-      "type": "food|nature|culture",
-      "emoji": "絵文字1つ",
-      "viral_score": 85〜99の整数,
-      "total_views": "例: 4,200万回",
-      "yt_views": "YouTubeの推定再生数",
-      "tt_views": "TikTokの推定再生数",
-      "ig_views": "Instagramの推定閲覧数",
-      "attraction_copy": "この場所・料理の魅力を伝える引き付けるコピー文（150〜200文字）。具体的な感動・五感表現・訪れたくなる言葉を使うこと。",
-      "why_trending": "なぜ今バズっているか（50文字以内）",
-      "best_hashtags": ["#タグ1","#タグ2","#タグ3"]
-    }
-  ]
-}`;
+  const sys=`日本のSNSトレンドアナリスト。指定期間に日本でバズった旅行・グルメスポットトップ10をJSONのみで返せ（前置き・\`\`\`不要）。
+{"spots":[{"rank":1,"name":"スポット名","location":"都道府県・市区町村","type":"food|nature|culture","emoji":"絵文字","viral_score":整数,"total_views":"再生数","yt_views":"YT数","tt_views":"TT数","ig_views":"IG数","attraction_copy":"魅力コピー150文字","why_trending":"理由50文字","best_hashtags":["#tag"]}]}`;
 
   try{
     const res=await fetch(API,{
