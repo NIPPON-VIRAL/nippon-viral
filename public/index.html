@@ -41,9 +41,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
 .control-strip{position:relative;z-index:1;padding:1.2rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;background:var(--paper2);}
 .tab-btn{font-size:.75rem;letter-spacing:.08em;padding:.45rem 1rem;border:1px solid var(--border-strong);background:transparent;color:var(--ash);cursor:pointer;font-family:'EB Garamond',serif;transition:all .2s;}
 .tab-btn:hover,.tab-btn.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
-.fetch-btn{margin-left:auto;background:var(--red);color:#fff;border:none;padding:.6rem 2rem;font-family:'Noto Serif JP',serif;font-size:.8rem;letter-spacing:.15em;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;}
-.fetch-btn:hover{background:var(--red-deep);}
-.fetch-btn:disabled{opacity:.45;cursor:not-allowed;}
 .loading-wrap{display:none;flex-direction:column;align-items:center;padding:6rem 2rem;gap:2rem;position:relative;z-index:1;}
 .loading-wrap.on{display:flex;}
 .loading-mon{font-family:'Noto Serif JP',serif;font-size:3rem;color:var(--red);animation:spin 3s linear infinite;display:block;}
@@ -102,8 +99,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
 .drawer-spot-name{font-family:'Noto Serif JP',serif;font-size:1.4rem;font-weight:600;line-height:1.3;margin-bottom:.3rem;}
 .drawer-spot-loc{font-size:.75rem;color:var(--ash);font-family:'EB Garamond',serif;letter-spacing:.06em;}
 .drawer-body{padding:1.5rem 2rem;flex:1;}
-.affil-note{font-size:.68rem;color:var(--ash);line-height:1.7;border:1px solid var(--border);padding:.7rem 1rem;margin-bottom:1.5rem;font-family:'EB Garamond',serif;letter-spacing:.03em;}
-.affil-note strong{color:var(--gold);}
+.affil-note{font-size:.68rem;color:var(--ash);line-height:1.7;border:1px solid rgba(192,57,43,0.25);background:rgba(192,57,43,0.04);padding:.8rem 1rem;margin-bottom:1.5rem;font-family:'EB Garamond',serif;letter-spacing:.03em;}
+.affil-note strong{color:var(--red);}
 .h-section-title{font-family:'EB Garamond',serif;font-size:.68rem;letter-spacing:.2em;color:var(--ash);padding-bottom:.6rem;border-bottom:1px solid var(--border-strong);margin-bottom:1rem;text-transform:uppercase;}
 .h-card{border:1px solid var(--border);margin-bottom:1rem;background:var(--paper);transition:border-color .2s;animation:fadeR .4s both;}
 @keyframes fadeR{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
@@ -152,7 +149,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
   <div class="logo">NIPPON VIRAL<span class="logo-sub">日本のバズり旅・毎日更新</span></div>
   <div class="header-right"><div class="live-pill"><div class="live-dot"></div>LIVE</div><span id="clock"></span></div>
 </header>
-  <!-- 広告表記バー -->
 <div style="background:#c0392b;color:#fff;text-align:center;padding:8px 1rem;font-size:0.72rem;letter-spacing:0.15em;font-family:'EB Garamond',serif;position:relative;z-index:99;">
   【PR・広告】本サイトはアフィリエイト広告（Booking.com・Airbnb・じゃらん 等）を利用しています
 </div>
@@ -163,7 +159,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
     <div class="masthead-period" id="period-text">集計期間: 昨日 08:00 → 本日 08:00</div>
   </div>
   <div class="masthead-meta">
-    YouTube Shorts・TikTok・Instagram の閲覧数をAIがリアルタイム分析<br><br>
+    YouTube Shorts・TikTok・Instagram の閲覧数をAIが分析<br><br>
     各スポットの魅力コピー + 近隣ホテル・Airbnb 5選を自動生成
     <div class="platform-row">
       <span class="plat yt">YouTube Shorts</span>
@@ -206,18 +202,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
   <div class="drawer-body" id="d-body"></div>
 </div>
 <script>
-/* ── 設定 ── アフィリエイトIDをここに入力 ── */
-const AFFILIATE = {
-  booking_aid: 'YOUR_BOOKING_AID',   // Booking.com アフィリエイトID
-  airbnb_ref:  'YOUR_AIRBNB_REF',    // Airbnb リファレンスコード
-  jalan_afid:  'YOUR_JALAN_AFID'     // じゃらん アフィリエイトID
-};
-/* ─────────────────────────────────────────── */
-
-const API = '/api/claude';  // ← Vercel Edge Function 経由
-let currentTab = 'all';
-let spots = [];
-let loadTimer;
+const AFFILIATE={booking_aid:'YOUR_BOOKING_AID',airbnb_ref:'YOUR_AIRBNB_REF',jalan_afid:'YOUR_JALAN_AFID'};
+const API='/api/claude';
+let currentTab='all',spots=[],loadTimer;
 
 function updateClock(){
   const n=new Date(),p=v=>String(v).padStart(2,'0');
@@ -252,32 +239,29 @@ async function fetchRanking(){
   const t8=new Date(now);t8.setHours(8,0,0,0);
   const y8=new Date(t8);y8.setDate(y8.getDate()-1);
   const period=`${fmt(y8)} 08:00 〜 ${fmt(t8)} 08:00`;
-  const catStr={all:'風景・絶景・グルメ・食事 すべて',food:'グルメ・食事',nature:'風景・絶景・自然',culture:'文化・観光・祭り'}[currentTab];
+  const catStr={all:'風景・絶景・グルメ・食事すべて',food:'グルメ・食事',nature:'風景・絶景・自然',culture:'文化・観光・祭り'}[currentTab];
 
-  const sys=`日本のSNSトレンドアナリスト。指定期間に日本でバズった旅行・グルメスポットトップ10をJSONのみで返せ（前置き・\`\`\`不要）。
-{"spots":[{"rank":1,"name":"スポット名","location":"都道府県・市区町村","type":"food|nature|culture","emoji":"絵文字","viral_score":整数,"total_views":"再生数","yt_views":"YT数","tt_views":"TT数","ig_views":"IG数","attraction_copy":"魅力コピー150文字","why_trending":"理由50文字","best_hashtags":["#tag"]}]}`;
+  const sys='日本SNSトレンドアナリスト。JSONのみ返すこと（前置き・```不要）。形式:{"spots":[{"rank":1,"name":"名前","location":"場所","type":"food","emoji":"🍜","viral_score":95,"total_views":"1200万回","yt_views":"500万","tt_views":"400万","ig_views":"300万","attraction_copy":"魅力コピー150文字","why_trending":"理由50文字以内","best_hashtags":["#tag1","#tag2","#tag3"]}]}';
 
   try{
     const res=await fetch(API,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system: sys,
-        user: `集計期間: ${period}\nカテゴリ: ${catStr}\nYouTube Shorts・TikTok・Instagramで日本の景色・食事として最も閲覧数が多かったスポットトップ10を教えてください。`,
-        use_web_search: true,
-        max_tokens: 2000
+        system:sys,
+        user:`集計期間:${period} カテゴリ:${catStr} この期間にYouTube Shorts・TikTok・Instagramで最も閲覧されたトップ10を返してください。`,
+        max_tokens:2000
       })
     });
     const data=await res.json();
     stopSteps();loading.classList.remove('on');
     if(data.error) throw new Error(data.error);
     let parsed={spots:[]};
-try{
-  const m=data.content.match(/\{[\s\S]*\}/);
-  if(m) parsed=JSON.parse(m[0]);
-  if(!parsed.spots) parsed={spots:[]};
-}catch(pe){console.error('JSON parse error',pe,data.content);}
-spots=parsed.spots;
+    try{
+      const m=data.content.match(/\{[\s\S]*\}/);
+      if(m) parsed=JSON.parse(m[0]);
+    }catch(pe){console.error('parse error',pe);}
+    spots=parsed.spots||[];
     renderSpots(spots);
   }catch(e){
     stopSteps();loading.classList.remove('on');
@@ -287,7 +271,7 @@ spots=parsed.spots;
 
 function renderSpots(list){
   const main=document.getElementById('main');
-  if(!list.length){main.innerHTML='<div class="empty"><span class="empty-kanji">無</span><div class="empty-title">データなし</div></div>';return;}
+  if(!list.length){main.innerHTML='<div class="empty"><span class="empty-kanji">無</span><div class="empty-title">データなし</div><div class="empty-sub">しばらくしてから再読み込みしてください</div></div>';return;}
   const typeLbl={food:'グルメ',nature:'絶景',culture:'文化'};
   const typeCls={food:'type-food',nature:'type-nature',culture:'type-culture'};
   main.innerHTML=`<div class="section-rule"><div class="rule-line"></div><span>TOP 10 — ${new Date().toLocaleDateString('ja-JP')} 更新</span><div class="rule-line"></div></div><div class="spots-list" id="spots-list"></div>`;
@@ -323,7 +307,7 @@ document.head.appendChild(st);
 async function openDrawer(idx,e){
   e&&e.stopPropagation();
   const s=spots[idx];
-  document.getElementById('d-name').textContent=s.emoji+' '+s.name;
+  document.getElementById('d-name').textContent=(s.emoji||'')+' '+s.name;
   document.getElementById('d-loc').textContent='📍 '+s.location;
   document.getElementById('d-body').innerHTML='<div class="h-loading"><div class="h-spinner">宿</div><div>宿泊施設を検索しています...</div></div>';
   document.getElementById('drawer-bg').classList.add('on');
@@ -333,34 +317,25 @@ async function openDrawer(idx,e){
 }
 
 async function loadHotels(spot){
-  const sys=`日本SNSトレンドアナリスト。必ずJSONのみ返すこと。
-{"spots":[{"rank":1,"name":"スポット名","location":"都道府県市区町村","type":"food","emoji":"🍜","viral_score":95,"total_views":"1200万回","yt_views":"500万","tt_views":"400万","ig_views":"300万","attraction_copy":"魅力コピー文","why_trending":"バズ理由","best_hashtags":["#tag1","#tag2"]}]}`;
-  "hotels": [
-    {
-      "name": "施設名",
-      "type": "hotel|airbnb|ryokan|business|boutique",
-      "distance": "スポットへのアクセス",
-      "price_yen": 整数,
-      "stars": 1〜5,
-      "rating": 3.5〜5.0,
-      "features": ["特徴1","特徴2","特徴3"],
-      "why_suitable": "このスポット訪問に適している理由（40〜60文字）",
-      "platform": "booking|airbnb|jalan",
-      "search_keyword": "予約サイト検索キーワード"
-    }
-  ],
-  "tips": {"best_season":"","access":"","budget_guide":"","local_secret":""}
-}`;
+  const sys='日本の旅行・宿泊専門コンシェルジュ。JSONのみ返すこと（前置き・```不要）。形式:{"hotels":[{"name":"施設名","type":"hotel","distance":"徒歩5分","price_yen":15000,"stars":4,"rating":4.3,"features":["特徴1","特徴2","特徴3"],"why_suitable":"このスポットに適した理由40文字","platform":"booking","search_keyword":"検索キーワード"}],"tips":{"best_season":"春・秋","access":"最寄り駅から徒歩10分","budget_guide":"1泊2日3万円〜","local_secret":"地元情報"}}';
   try{
     const res=await fetch(API,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({system:sys,user:`スポット: ${spot.name}（${spot.location}）\n価格帯を分散させ（高級旅館・ホテル・Airbnbなど）5施設を教えてください。`,max_tokens:3000})
+      body:JSON.stringify({
+        system:sys,
+        user:`スポット:${spot.name}(${spot.location}) 高級旅館・ホテル・Airbnbなど価格帯を分散させた5施設を返してください。`,
+        max_tokens:1500
+      })
     });
     const data=await res.json();
     if(data.error) throw new Error(data.error);
-    const m=data.content.match(/\{[\s\S]*\}/);
-    renderHotels(JSON.parse(m?m[0]:data.content),spot);
+    let parsed={hotels:[]};
+    try{
+      const m=data.content.match(/\{[\s\S]*\}/);
+      if(m) parsed=JSON.parse(m[0]);
+    }catch(pe){console.error('hotel parse error',pe);}
+    renderHotels(parsed,spot);
   }catch(e){
     document.getElementById('d-body').innerHTML=`<div style="padding:1.5rem;color:var(--red);font-size:.8rem;">${e.message}</div>`;
   }
@@ -369,7 +344,7 @@ async function loadHotels(spot){
 function renderHotels(data,spot){
   const typeIcon={hotel:'🏨',airbnb:'🏠',ryokan:'♨️',business:'🏢',boutique:'✨'};
   const typeLbl={hotel:'ホテル',airbnb:'Airbnb',ryokan:'旅館',business:'ビジネスH',boutique:'ブティックH'};
-  let html=`<div class="affil-note"><strong>アフィリエイト情報：</strong>下記リンクからのご予約がサイト運営のサポートになります。</div><div class="h-section-title">おすすめ宿泊施設 5選 — ${spot.location}</div>`;
+  let html=`<div class="affil-note"><strong>【PR・広告】</strong>下記はアフィリエイト広告です。リンクからのご予約でサイト運営のサポートになります。価格・空室は各サイトでご確認ください。</div><div class="h-section-title">おすすめ宿泊施設 5選 — ${spot.location}</div>`;
   (data.hotels||[]).forEach((h,i)=>{
     const url=getUrl(h,spot);
     const {lbl,cls}=getBtnStyle(h.platform);
@@ -396,10 +371,10 @@ function renderHotels(data,spot){
   if(data.tips){
     const t=data.tips;
     html+=`<div class="h-section-title" style="margin-top:1.5rem;">旅のヒント</div><div class="tips-grid">
-      <div class="tip"><div class="tip-lbl">ベストシーズン</div>${t.best_season}</div>
-      <div class="tip"><div class="tip-lbl">アクセス</div>${t.access}</div>
-      <div class="tip"><div class="tip-lbl">旅行予算目安</div>${t.budget_guide}</div>
-      <div class="tip"><div class="tip-lbl">ローカル秘密情報</div>${t.local_secret}</div>
+      <div class="tip"><div class="tip-lbl">ベストシーズン</div>${t.best_season||'---'}</div>
+      <div class="tip"><div class="tip-lbl">アクセス</div>${t.access||'---'}</div>
+      <div class="tip"><div class="tip-lbl">旅行予算目安</div>${t.budget_guide||'---'}</div>
+      <div class="tip"><div class="tip-lbl">ローカル情報</div>${t.local_secret||'---'}</div>
     </div>`;
   }
   document.getElementById('d-body').innerHTML=html;
@@ -419,15 +394,13 @@ function getBtnStyle(p){
 function closeDrawer(){document.getElementById('drawer-bg').classList.remove('on');document.getElementById('drawer').classList.remove('on');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
 function scheduleAt8am(){
-  const now=new Date();
-  const next=new Date();
+  const now=new Date(),next=new Date();
   next.setHours(8,0,0,0);
   if(now>=next) next.setDate(next.getDate()+1);
   setTimeout(()=>{fetchRanking();setInterval(fetchRanking,86400000);},next-now);
 }
 window.addEventListener('load',()=>{fetchRanking();scheduleAt8am();});
 </script>
-<!-- フッター法的表記 -->
 <footer style="position:relative;z-index:1;border-top:1px solid rgba(14,12,10,0.15);padding:2rem;font-size:0.7rem;color:#7a7168;line-height:2;font-family:'EB Garamond',serif;background:#f2ede6;">
   <div style="max-width:800px;margin:0 auto;">
     <div style="font-size:0.8rem;font-weight:600;color:#2c2925;margin-bottom:0.8rem;letter-spacing:0.1em;">特定商取引法に基づく表記 / 免責事項</div>
@@ -442,5 +415,6 @@ window.addEventListener('load',()=>{fetchRanking();scheduleAt8am();});
       © 2026 NIPPON VIRAL — 参加アフィリエイトプログラム：Booking.com Affiliate Partner Program / Airbnb Associates / じゃらんアフィリエイト
     </div>
   </div>
-</footer></body>
+</footer>
+</body>
 </html>
