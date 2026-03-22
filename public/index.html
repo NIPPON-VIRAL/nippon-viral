@@ -152,6 +152,10 @@ header{position:sticky;top:0;z-index:100;background:rgba(250,248,244,0.95);backd
   <div class="logo">NIPPON VIRAL<span class="logo-sub">日本のバズり旅・毎日更新</span></div>
   <div class="header-right"><div class="live-pill"><div class="live-dot"></div>LIVE</div><span id="clock"></span></div>
 </header>
+  <!-- 広告表記バー -->
+<div style="background:#c0392b;color:#fff;text-align:center;padding:8px 1rem;font-size:0.72rem;letter-spacing:0.15em;font-family:'EB Garamond',serif;position:relative;z-index:99;">
+  【PR・広告】本サイトはアフィリエイト広告（Booking.com・Airbnb・じゃらん 等）を利用しています
+</div>
 <div class="masthead">
   <div>
     <div class="masthead-kicker">Japan Travel Trending</div>
@@ -431,6 +435,22 @@ function getBtnStyle(p){
 }
 function closeDrawer(){document.getElementById('drawer-bg').classList.remove('on');document.getElementById('drawer').classList.remove('on');document.body.style.overflow='';}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+window.addEventListener('load',()=>fetchRanking());
 </script>
-</body>
+<!-- フッター法的表記 -->
+<footer style="position:relative;z-index:1;border-top:1px solid rgba(14,12,10,0.15);padding:2rem;font-size:0.7rem;color:#7a7168;line-height:2;font-family:'EB Garamond',serif;background:#f2ede6;">
+  <div style="max-width:800px;margin:0 auto;">
+    <div style="font-size:0.8rem;font-weight:600;color:#2c2925;margin-bottom:0.8rem;letter-spacing:0.1em;">特定商取引法に基づく表記 / 免責事項</div>
+    <div>
+      <strong>【広告・PR表記】</strong> 本サイトはアフィリエイトプログラムに参加しており、掲載ホテル・宿泊施設へのリンクから予約・購入が行われた場合、当サイトに報酬が発生することがあります。<br>
+      掲載内容はSNS閲覧数をもとにAIが自動生成したものであり、実際の情報と異なる場合があります。宿泊施設の価格・空室状況は各予約サイトにてご確認ください。<br>
+      <strong>【運営者情報】</strong> 運営：NIPPON-VIRAL ／ お問い合わせ：サイト内フォームよりご連絡ください。<br>
+      <strong>【著作権】</strong> 本サイトの内容の無断転載・複製を禁じます。<br>
+      <strong>【免責事項】</strong> 本サイトの情報を利用したことによる損害について、当サイトは一切の責任を負いません。
+    </div>
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(14,12,10,0.1);">
+      © 2026 NIPPON VIRAL — 参加アフィリエイトプログラム：Booking.com Affiliate Partner Program / Airbnb Associates / じゃらんアフィリエイト
+    </div>
+  </div>
+</footer></body>
 </html>
