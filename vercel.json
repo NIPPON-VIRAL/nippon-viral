@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "echo 'No build needed'",
   "outputDirectory": "public",
-  "routes": [
-    {
-      "src": "/api/claude",
-      "dest": "/api/claude.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+  "functions": {
+    "api/claude.js": {
+      "maxDuration": 60
     }
+  },
+  "routes": [
+    { "src": "/api/claude", "dest": "/api/claude.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
