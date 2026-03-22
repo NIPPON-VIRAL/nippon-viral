@@ -329,8 +329,8 @@ async function openDrawer(idx,e){
 }
 
 async function loadHotels(spot){
-  const sys=`あなたは日本の旅行・宿泊専門コンシェルジュです。指定スポットに最適な宿泊施設5つをJSONのみで返してください（前置き・\`\`\`不要）。
-{
+  const sys=`日本SNSトレンドアナリスト。必ずJSONのみ返すこと。
+{"spots":[{"rank":1,"name":"スポット名","location":"都道府県市区町村","type":"food","emoji":"🍜","viral_score":95,"total_views":"1200万回","yt_views":"500万","tt_views":"400万","ig_views":"300万","attraction_copy":"魅力コピー文","why_trending":"バズ理由","best_hashtags":["#tag1","#tag2"]}]}`;
   "hotels": [
     {
       "name": "施設名",
