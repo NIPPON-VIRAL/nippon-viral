@@ -2,11 +2,6 @@
   "version": 2,
   "buildCommand": "echo 'No build needed'",
   "outputDirectory": "public",
-  "functions": {
-    "api/claude.js": {
-      "runtime": "edge"
-    }
-  },
   "routes": [
     {
       "src": "/api/claude",
@@ -14,21 +9,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
-    },
-    {
-      "source": "/data/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
+      "dest": "/$1"
     }
   ]
 }
