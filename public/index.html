@@ -265,7 +265,7 @@ async function fetchRanking(){
         system: sys,
         user: `集計期間: ${period}\nカテゴリ: ${catStr}\nYouTube Shorts・TikTok・Instagramで日本の景色・食事として最も閲覧数が多かったスポットトップ10を教えてください。`,
         use_web_search: true,
-        max_tokens: 5000
+        max_tokens: 2000
       })
     });
     const data=await res.json();
